@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ticket</title>
+    </head>
+
+    <body>
+        <h1> Register with Ticket System</h1>
+
+        {% if registered %}
+        <strong>Thank you for registering!</strong>
+        <a href="/ticket/"> Return to the homepage.</a><br />
+        {% else %}
+        <strong>register here!</strong><br/>
+        <form id = "user_form" method = "post" action = "/ticket/register/"
+            enctype = "multipart/form-data">
+            {% csrf_token %}
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
+
+            <input type = "submit" name = "submit" value = "Register" />
+        </form>
+        {% endif %}
+    </body>
+</html>

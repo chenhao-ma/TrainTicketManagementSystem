@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ticket</title>
+    </head>
+    <body>
+        <h1>Ticket Query</h1>
+        <form id = "query_form" method = "post" action = "/ticket/query/">
+            {% csrf_token %}
+            Departure: <input type = "text" name = "departure" value = "" size = "50" />
+            <br />
+            destination: <input type = "text" name = "destination" value = "" size = 50 />
+            <br />
+
+            <input type = "submit" value = "submit" />
+        </form>
+    </body>
+</html>
