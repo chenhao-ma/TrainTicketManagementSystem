@@ -1,25 +1,56 @@
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Ticket</title>
-    </head>
 
-    <body>
-        <h1> Register with Ticket System</h1>
+<head>
+    <title>Ticket</title>
+</head>
 
-        {% if registered %}
-        <strong>Thank you for registering!</strong>
-        <a href="/ticket/"> Return to the homepage.</a><br />
-        {% else %}
-        <strong>register here!</strong><br/>
-        <form id = "user_form" method = "post" action = "/ticket/register/"
-            enctype = "multipart/form-data">
-            {% csrf_token %}
-            {{ user_form.as_p }}
-            {{ profile_form.as_p }}
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="">Train Ticket System</a>
+    </div>
 
-            <input type = "submit" name = "submit" value = "Register" />
-        </form>
-        {% endif %}
-    </body>
-</html>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="../">Home</a></li>
+        <li><a href="../query/">Query</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="../login/">Login</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+
+  </div><!-- /.container-fluid -->
+</nav>
+
+{% if registered %}
+<strong>Thank you for registering!</strong>
+<a href="/ticket/"> Return to the homepage.</a><br />
+{% else %}
+
+<form id = "user_form" method = "post" action = "/ticket/register/"
+    enctype = "multipart/form-data">
+    {% csrf_token %}
+    {% bootstrap_form user_form%}
+    {% bootstrap_form profile_form%}
+    <input type = "submit" name = "submit" value = "Register" />
+</form>
+{% endif %}
+

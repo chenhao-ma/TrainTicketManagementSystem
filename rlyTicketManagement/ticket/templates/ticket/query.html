@@ -1,18 +1,77 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Ticket</title>
-    </head>
-    <body>
-        <h1>Ticket Query</h1>
-        <form id = "query_form" method = "post" action = "/ticket/query/">
-            {% csrf_token %}
-            Departure: <input type = "text" name = "departure" value = "" size = "50" />
-            <br />
-            destination: <input type = "text" name = "destination" value = "" size = 50 />
-            <br />
+{# Load the tag library #}
+{% load bootstrap3 %}
 
-            <input type = "submit" value = "submit" />
-        </form>
-    </body>
-</html>
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+<head>
+    <title>Train Ticket System</title>
+</head>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="">Train Ticket System</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="../">Home </a></li>
+        <li class="active"><a href="#">Query <span class="sr-only">(current)</span></a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+
+        {% if logined %}
+            <li><a href="../logout">Logout</a></li>
+            <li><a href="#"> {{currentUser}} </a></li>
+        {% else %}
+            <li><a href="../register">Register Here!</a></li>
+            <li><a href="../login">Login</a></li>
+        {% endif %}
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<form class="form-inline" role="form" id = "query_form" method = "post" action = "/ticket/query/">
+    {% csrf_token %}
+    <div class="form-group">
+        <label>Departure: </label>
+        <input type="text"  class="form-control" name = "departure">
+    </div>
+    <div class="form-group">
+        <label>Destination: </label>
+        <input type="text" class="form-control" name = "destination">
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+    {% if not inputCorrect %}
+        <b>Please input the correct Station name!</b>
+        <br />
+    {% endif %}
+</form>
+
+{% if queried and inputCorrect %}
+    <h2>Query Result</h2>
+    {% for item in dList %}
+        {{ item.departure.trainNo }} {{ item.departure.staName.name }} {{ item.departure.departureTime }} {{ item.destination.staName.name }} {{ item.destination.arriveTime }} {{ item.totSeat }} <br />
+    {% endfor %}
+    {% for item in uList %}
+        {{ item.0.trainNo }} {{ item.0.departure }} {{ item.0.departureTime }} {{ item.0.destination }} {{item.0.arriveTime }} {{ item.0.totSeat }} <br />
+        Transfer @ {{item.0.destination }}<br />
+        {{ item.1.trainNo }} {{ item.1.departure }} {{ item.1.departureTime }} {{ item.1.destination }} {{item.1.arriveTime }} {{ item.1.totSeat }} <br />
+    {% endfor%}
+{% endif %}
+

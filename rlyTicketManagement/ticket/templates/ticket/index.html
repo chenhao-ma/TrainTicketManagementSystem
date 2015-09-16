@@ -1,11 +1,47 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Ticket</title>
+{# Load the tag library #}
+{% load bootstrap3 %}
 
-    </head>
-    <body>
-        <a href="/ticket/register/">Register Here</a>
-        <a href="/ticket/login/">Login</a>
-    </body>
-</html>
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+<head>
+    <title>Train Ticket System</title>
+</head>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="">Train Ticket System</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="">Home <span class="sr-only">(current)</span></a></li>
+        <li><a href="query">Query</a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+
+        {% if logined %}
+            <li><a href="logout">Logout</a></li>
+            <li><a href="#"> {{currentUser}} </a></li>
+        {% else %}
+            <li><a href="register">Register Here!</a></li>
+            <li><a href="login">Login</a></li>
+        {% endif %}
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+

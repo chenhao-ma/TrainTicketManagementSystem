@@ -1,12 +1,17 @@
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from .forms import UserForm, UserProfileForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Station, DirectRoute
+from .models import Station, DirectRoute, Train
 
 def index(request):
-    return render_to_response('ticket/index.html', {})
+    logined = False
+    currentUser = None
+    if request.user.is_active:
+        logined = True
+        currentUser = request.user
+    return render_to_response('ticket/index.html', {'logined' : logined, 'currentUser' :currentUser })
 
 def register(request):
     # get the request's context
@@ -41,9 +46,9 @@ def register(request):
             # update our variable to tell the template registration was successful
             registered = True
 
-            # invalid form or forms - mistakes or something else?
-            # print problems to the terminal
-            # they'll also be shown to the user
+        # invalid form or forms - mistakes or something else?
+        # print problems to the terminal
+        # they'll also be shown to the user
         else:
             print user_form.errors, profile_form.errors
     # not a HTTP POST, so we render our form using two ModelForm instances.
@@ -87,26 +92,43 @@ def user_login(request):
     else:
         return render_to_response('ticket/login.html', {}, context)
 
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect('/ticket')
+
+
 def ticket_query(request):
     context = RequestContext(request)
     queried = False
+    inputCorrect = True
+    directList = []
+    undirectList = []
     if request.method == 'POST':
         pdeparture = request.POST['departure']
-        pdestination = destination.POST['destination']
+        pdestination = request.POST['destination']
 
-        if Station.objects.filter(name = departure) == [] or
-            Station.objects.filter(name = departure) == []:
-            return HttpResponse("Please input the correct station name!")
+        if len(Station.objects.filter(name = pdeparture)) == 0 or len(Station.objects.filter(name = pdestination)) == 0:
+            inputCorrect = False
         else:
             directList = DirectRoute.objects.filter(
-                Q(departure.staName.name = pdeparture)
-                & Q(destination.staName.name = pdestination))
+                departure__staName__name = pdeparture,
+                destination__staName__name = pdestination)
+            tList = Train.objects.raw('select A.id, B.trainNo_id trainNo, B.staName_id departure, B.departureTime departureTime, C.staName_id destination, C.arriveTime arriveTime, A.totSeat totSeat from ticket_directroute A, ticket_throughstation B, ticket_throughstation C where A.departure_id = B.id and A.destination_id = C.id and A.totSeat > 0;')
+            tList = [item for item in tList if (item.departure == pdeparture or item.destination == pdestination)]
+            length = len(tList)
+
+            for i in range(length):
+                for j in range(i + 1, length):
+                    if tList[i].departure == pdeparture and tList[j].destination == pdestination and tList[i].destination == tList[j].departure and tList[i].arriveTime < tList[j].departureTime :
+                            undirectList.append( (tList[i], tList[j]) )
+            for item in undirectList:
+                print item
             queried = True
-            return render_to_response('ticket/query.html',
-                {'dList' : directList, 'queried' : queried})
+        return render_to_response('ticket/query.html',
+            {'dList' : directList, 'uList' : undirectList, 'queried' : queried, 'inputCorrect' : inputCorrect}, context)
     else:
         return render_to_response('ticket/query.html',
-            {'dList' : [], 'queried' : queried})
+            {'dList': [], 'uList' : undirectList, 'queried' : queried, 'inputCorrect' : inputCorrect}, context)
 
 
 

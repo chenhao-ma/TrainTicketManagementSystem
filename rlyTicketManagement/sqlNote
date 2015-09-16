@@ -1,0 +1,5 @@
+select B.trainNo_id trainNo, B.staName_id departure, B.departureTime departureTime, C.staName_id destination, C.arriveTime arriveTime, A.totSeat
+from ticket_directroute A, ticket_throughstation B, ticket_throughstation C
+where A.departure_id = B.id and A.destination_id = C.id;
+
+DirectRoute.objects.raw('select B.trainNo_id trainNo, B.staName_id departure, B.departureTime departureTime, C.staName_id destination, C.arriveTime arriveTime, A.totSeat from ticket_directroute A, ticket_throughstation B, ticket_throughstation C where A.departure_id = B.id and A.destination_id = C.id;')
